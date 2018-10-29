@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1087796897932",
+    "firebase_url": "https://bmkg-f7780.firebaseio.com",
+    "project_id": "bmkg-f7780",
+    "storage_bucket": "bmkg-f7780.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087796897932:android:43b7a78cc616c3cb",
+        "android_client_info": {
+          "package_name": "com.ocph23.bmkg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087796897932-0644ce52809g95odi0b8q1nfcqnkdj8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuoCHviANQgVAsETR1-Njo3cjkqBQ6dAU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
