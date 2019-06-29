@@ -11,6 +11,12 @@ using System.Linq;
 using Microsoft.AspNet.SignalR;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using System.Web;
+using FcmSharp.Settings;
+using FcmSharp;
+using FcmSharp.Requests;
 
 namespace WebService
 {
@@ -18,13 +24,15 @@ namespace WebService
     {
         private readonly static Lazy<Broadcaster> _instance =
             new Lazy<Broadcaster>(() => new Broadcaster());
-        // We're going to broadcast to all clients a maximum of 25 times per second
+         // We're going to broadcast to all clients a maximum of 25 times per second
         private readonly TimeSpan BroadcastInterval =
-            TimeSpan.FromMinutes(3);
+            TimeSpan.FromMinutes(1);
         private readonly IHubContext _hubContext;
         private Timer _broadcastLoop;
         private Gempa _model;
         private bool _modelUpdated;
+      //  private FcmClientSettings settings;
+
         public Broadcaster()
         {
             // Save our hub context so we can easily use it 
@@ -32,17 +40,64 @@ namespace WebService
             _hubContext = GlobalHost.ConnectionManager.GetHubContext<InfoHub>();
             _model = new Gempa();
             _modelUpdated = false;
+
+          //  settings = FileBasedFcmClientSettings.CreateFromFile("bmkg-f7780", AppDomain.CurrentDomain.BaseDirectory + "bmkg-f7780-firebase-adminsdk-3zfxv-f298fdfb18.json");
+
             // Start the broadcast loop
             _broadcastLoop = new Timer(
                 BroadcastShape,
                 null,
                 BroadcastInterval,
                 BroadcastInterval);
+                             
+
         }
 
 
         public async void BroadcastShape(object state)
         {
+ 
+            // Construct the Client:
+            //using (var client = new FcmClient(settings))
+            //{
+            //    // Construct the Data Payload to send:
+            //    var data = new Dictionary<string, string>()
+            //    {
+            //        {"A", "B"},
+            //        {"C", "D"}
+            //    };
+
+            //    // The Message should be sent to the News Topic:
+            //    var message = new FcmMessage()
+            //    {          
+            //        ValidateOnly = false,       
+            //        Message = new Message
+            //        {    Notification =new Notification() { Title="Judul",  Body="BODY"},
+            //            Topic = "news"
+            //        }
+            //    };
+            //    try
+            //    {
+            //        CancellationTokenSource cts = new CancellationTokenSource();
+
+            //        // Send the Message and wait synchronously:
+            //        var results = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
+
+            //        // Print the Result to the Console:
+            //        System.Console.WriteLine("Message ID = {0}", results.Name);
+            //    }
+            //    catch (Exception ex)
+            //    {
+                      
+            //    }
+            //    // Finally send the Message and wait for the Result:
+               
+                                   
+            //}
+
+
+
+
             // No need to send anything if our model hasn't changed
             await Task.Delay(10);
             var result = GetGempaInfo();
@@ -76,13 +131,13 @@ namespace WebService
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/v0.1/apps/ocph23/bmkg-app/push/notifications");
-                    var str = "{'notification_content' : { 'name' : 'test', 'title' : 'Gempa Dirasakan', 'body' : '"+_model.Wilayah1+"', 'custom_data':{'sound' : 'alarm', 'key2' : 'val2'}}}";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/v0.1/apps/ocph23/TestApp/push/notifications");
+                    var str = "{'notification_content' : { 'name' : 'test', 'title' : 'Gempa Dirasakan', 'body' : '" + _model.Wilayah1 + "', 'custom_data':{'sound' : 'alarm', 'waktu' : 'dimuka'}}}";
                     request.Content = new StringContent(str,
                                                         Encoding.UTF8,
                                                         "application/json");//CONTENT-TYPE header
-                    request.Content.Headers.Add("x-api-token", "7fddb99e4d3c45feb863b25bef54d29b71bb0aa7");
-                //request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                    request.Content.Headers.Add("x-api-token", "4b46ec5c9477e63a4701a8d1291b9f8c877eb9d1");
+                    //request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
                     await client.SendAsync(request)
                           .ContinueWith(responseTask =>
@@ -95,7 +150,7 @@ namespace WebService
 
 
 
-                        
+
                 }
 
 
